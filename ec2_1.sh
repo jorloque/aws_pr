@@ -5,4 +5,4 @@ aws ec2 run-instances
 --key-name howtoforge-test 
 --security-group-ids sg-7fa4d512 
 --subnet-id subnet-ae1a35c7 
---region eu-west-3
+--region us-east-1
