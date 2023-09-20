@@ -1,8 +1,6 @@
-aws ec2 run-instances 
---image-id ami-0a0d71ff90f62f72a
---count 1 
---instance-type t2.micro 
---key-name howtoforge-test 
---security-group-ids sg-7fa4d512 
---subnet-id subnet-ae1a35c7 
+aws ec2 run-instances \
+--image-id ami-050406429a71aaa64 \
+--count 1  \
+--instance-type m1.small \
+--key-name vockey \
 --region us-east-1
