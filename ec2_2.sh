@@ -9,7 +9,6 @@
 AWS_VPC_CIDR_BLOCK=10.22.0.0/16
 AWS_Subred_CIDR_BLOCK=10.22.1.0/24
 AWS_IP_UbuntuServer=10.22.1.100
-AWS_IP_WindowsServer=10.22.1.200
 AWS_Proyecto=SRI
 
 echo "######################################################################"
@@ -20,9 +19,6 @@ echo "AWS_Subred_CIDR_BLOCK: " $AWS_Subred_CIDR_BLOCK
 echo "AWS_IP_UbuntuServer:   " $AWS_IP_UbuntuServer
 echo "AWS_Proyecto:          " $AWS_Proyecto
 echo "######################################################################"
-###############################################################################
-## Crear una VPC (Virtual Private Cloud) con su etiqueta
-
 echo "############## Crear VPC, Subred #####################"
 echo "######################################################################"
 echo "Creando VPC..."
