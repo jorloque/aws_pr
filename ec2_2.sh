@@ -9,7 +9,7 @@
 AWS_VPC_CIDR_BLOCK=10.22.0.0/16
 AWS_Subred_CIDR_BLOCK=10.22.1.0/24
 AWS_IP_UbuntuServer=10.22.1.100
-AWS_Proyecto=SRI
+AWS_Proyecto=DAW
 
 echo "######################################################################"
 echo "Creación de una VPC y una instancia EC2 Ubuntu Server 22.04 "
@@ -26,7 +26,6 @@ echo "Creando VPC..."
 AWS_ID_VPC=$(aws ec2 create-vpc \
   --cidr-block $AWS_VPC_CIDR_BLOCK \
   --amazon-provided-ipv6-cidr-block \
-  --tag-specification ResourceType=vpc,Tags=[{Key=Name,Value=$AWS_Proyecto-vpc}] \
   --query 'Vpc.{VpcId:VpcId}' \
   --output text)
 
@@ -38,9 +37,9 @@ aws ec2 modify-vpc-attribute \
 ## Crear una subred publica con su etiqueta
 echo "Creando Subred..."
 AWS_ID_SubredPublica=$(aws ec2 create-subnet \
-  --vpc-id $AWS_ID_VPC --cidr-block $AWS_Subred_CIDR_BLOCK \
+  --vpc-id $AWS_ID_VPC \
+  --cidr-block $AWS_Subred_CIDR_BLOCK \
   --availability-zone us-east-1a \
-  --tag-specifications ResourceType=subnet,Tags=[{Key=Name,Value=$AWS_Proyecto-subred-publica}] \
   --query 'Subnet.{SubnetId:SubnetId}' \
   --output text)
 
@@ -102,31 +101,8 @@ AWS_EC2_INSTANCE_ID=$(aws ec2 run-instances \
   --monitoring "Enabled=false" \
   --security-group-ids $AWS_ID_GrupoSeguridad_Ubuntu \
   --subnet-id $AWS_ID_SubredPublica \
-  --user-data file://datosusuarioUbuntu.txt \
   --private-ip-address $AWS_IP_UbuntuServer \
-  --tag-specifications ResourceType=instance,Tags=[{Key=Name,Value=$AWS_Proyecto-us}] \
   --query 'Instances[0].InstanceId' \
   --output text)
 
-#echo $AWS_EC2_INSTANCE_ID
-###############################################################################
-## Crear IP Estatica para la instancia Ubuntu. (IP elastica)
-echo "Creando IP elastica Ubuntu"
-AWS_IP_Fija_UbuntuServer=$(aws ec2 allocate-address --output text)
-echo $AWS_IP_Fija_UbuntuServer 
-
-## Recuperar AllocationId de la IP elastica
-AWS_IP_Fija_UbuntuServer_AllocationId=$(echo $AWS_IP_Fija_UbuntuServer | awk '{print $1}')
-echo $AWS_IP_Fija_UbuntuServer_AllocationId
-
-## Añadirle etiqueta a la ip elástica de Ubuntu
-aws ec2 create-tags \
---resources $AWS_IP_Fija_UbuntuServer_AllocationId \
---tags Key=Name,Value=$AWS_Proyecto-us-ip
-
-###############################################################################
-## Asociar la ip elastica a la instancia Ubuntu
-echo "Esperando a que la instancia esté disponible para asociar la IP elastica"
-sleep 100
-aws ec2 associate-address --instance-id $AWS_EC2_INSTANCE_ID --allocation-id $AWS_IP_Fija_UbuntuServer_AllocationId
 
